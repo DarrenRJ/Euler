@@ -1162,11 +1162,6 @@ pub fn p27() -> i64
     (a_sol)*(b_sol as i64)
 }
 
-pub fn skip() -> u64
-{
-    0 // we have to skip p27 in the u64 array as it needs to return a -ve number
-}
-
 
 // Starting with the number 1 and moving to the right in a clockwise direction a 5 by 5 spiral is formed as follows:
 
