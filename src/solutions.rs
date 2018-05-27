@@ -2065,3 +2065,110 @@ pub fn p50() -> u64
     }
     consec_sum_prime as u64
 }
+
+
+
+
+// By replacing the 1st digit of the 2-digit number *3, it turns out that six of the nine possible values: 13, 23, 43, 53, 73, and 83, are all prime.
+// By replacing the 3rd and 4th digits of 56**3 with the same digit, this 5-digit number is the first example having seven primes among the ten generated numbers, yielding the family: 56003, 56113, 56333, 56443, 56663, 56773, and 56993. Consequently 56003, being the first member of this family, is the smallest prime with this property.
+// Find the smallest prime which, by replacing part of the number (not necessarily adjacent digits) with the same digit, is part of an eight prime value family.
+
+// 8 family sequence means it has to start with 0, 1 or 2
+// obviously the last digit can't be one of the replaced digits
+// we have to have 3 repeating digits
+// the 7 prime sequence has 5 digits so assume 6 digits to start
+
+
+// function to generate the candidate number out of the components we itorate over
+fn generate_candidate( start : usize, last_digit : u8, pattern : [bool; 6], replacment : u8 ) -> usize
+{
+    let mut candidate : usize = 0;
+    let digits: [u8;3] = [ (start/10) as u8, (start%10) as u8, last_digit ];
+    let mut j = 0;
+//    println!("generate_candidate() start {} last_digit {} pattern {:?} replacment {}", start, last_digit, pattern, replacment ); 
+
+    for i in 0..pattern.len()
+    {
+        candidate *= 10;        
+        if pattern[i] == true
+        {
+            candidate += replacment as usize;
+        }
+        else
+        {
+            candidate += digits[j] as usize;
+            j += 1;
+        }
+    }
+//    println!("candidate {}", candidate ); 
+    candidate
+}
+
+
+
+pub fn p51() -> u64
+{
+    // a true indicates we will replace this digit
+    let patterns: [[bool; 6]; 10] = [ [false, false, true,  true,  true,  false ],
+                                      [false, true,  false, true,  true,  false ],
+                                      [false, true,  true,  false, true,  false ],
+                                      [false, true,  true,  true,  false, false ],
+                                      [true,  false, false, true,  true,  false ],
+                                      [true,  false, true,  false, true,  false ],
+                                      [true,  false, true,  true,  false, false ],
+                                      [true,  true,  false, false, true,  false ],
+                                      [true,  true,  false, true,  false, false ],
+                                      [true,  true,  true,  false, false, false ] ];
+    let sieve = primal::Sieve::new(999_999);
+    let last_digit: [u8; 4] = [ 1,3,7,9 ]; // the possible last digits for a prime > 2
+
+
+// generate candidates and check if they satisy the requirements
+
+// the longest loop is generting the 3 non replaced digits
+// so do this at the outer layer so we only do it once
+    for i in 11..24//100 // represents the first 2 digits
+    {
+        for j in 0..patterns.len()
+        {
+            let pattern = patterns[j];
+            for k in 0..last_digit.len() // index into "last_digit"
+            {
+                // loop to check family
+                let mut family_size = 0;
+                let mut first_prime = 0;
+                for replacment in 0..10 
+                {
+                    // skip leading zero's
+                    if replacment == 0 && pattern[0] == true
+                    {
+                        continue;
+                    }
+                    // if there are too many misses to make a family of 8
+                    if replacment > family_size+2
+                    {
+                        break;
+                    }
+
+                    let mut candidate : usize = generate_candidate( i, last_digit[k], pattern, replacment );
+
+                    if sieve.is_prime( candidate ) 
+                    {
+                        family_size += 1;
+
+                        if family_size == 8
+                        {
+                            return first_prime as u64;
+                        }
+                        if first_prime == 0
+                        {
+                            first_prime = candidate;
+                        }                        
+                    }
+                }
+            }
+        }
+    }
+
+    return 0;
+}
