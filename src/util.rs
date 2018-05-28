@@ -171,6 +171,82 @@ pub fn permutate( digits : &mut Vec<u64>, num : u32  )
     }
 }
 
+
+// function to find if 3 numbers are decimal digit permutations of each other
+pub fn is_3_perm( mut a : usize, mut b:usize, mut c: usize ) -> bool
+{
+    let mut digits_a : Vec<u8> = Vec::new();
+    let mut digits_b : Vec<u8> = Vec::new();
+    let mut digits_c : Vec<u8> = Vec::new();
+    while a > 0
+    {
+        digits_a.push((a%10) as u8);
+        a /= 10;
+    }
+
+    while b > 0 
+    {
+        digits_b.push((b%10) as u8);
+        b /= 10;
+    }
+    while c > 0
+    {
+        digits_c.push((c%10) as u8);
+        c /= 10;
+    }
+    digits_a.sort();
+    digits_b.sort();
+    digits_c.sort();
+
+    for i in 0..digits_a.len()
+    {
+        if digits_a[i] != digits_b[i] ||
+           digits_a[i] != digits_c[i]
+        {
+            return false
+        }
+    }
+    return true;
+}
+
+
+// fucntion to find if two numbers are deciaml digit permutations of each other
+pub fn is_perm( mut a :usize, mut b : usize ) -> bool
+{
+    let mut digits_a : Vec<u8> = Vec::new();
+    let mut digits_b : Vec<u8> = Vec::new();
+
+    while a > 0
+    {
+        digits_a.push((a%10) as u8);
+        a /= 10;
+    }
+    while b > 0
+    {
+        digits_b.push((b%10) as u8);
+        b /= 10;
+    }
+    digits_a.sort();
+    digits_b.sort();
+
+    if digits_a.len() != digits_b.len()
+    {
+        return false;
+    }
+
+    for i in 0..digits_a.len()
+    {
+        if digits_a[i] != digits_b[i]
+        {
+            return false
+        }
+    }
+
+    return true;
+}
+
+
+
 pub fn quadratic( a : i64, b:i64, n:i64 ) -> u64
 {
     let quad = (n*n) +(a*n) + (b);

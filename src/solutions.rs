@@ -1972,43 +1972,6 @@ pub fn p48() -> u64
 
 
 
-fn is_perm( mut a : usize, mut b:usize, mut c: usize ) -> bool
-{
-    let mut digits_a : Vec<u8> = Vec::new();
-    let mut digits_b : Vec<u8> = Vec::new();
-    let mut digits_c : Vec<u8> = Vec::new();
-    while a > 0
-    {
-        digits_a.push((a%10) as u8);
-        a /= 10;
-    }
-
-    while b > 0 
-    {
-        digits_b.push((b%10) as u8);
-        b /= 10;
-    }
-    while c > 0
-    {
-        digits_c.push((c%10) as u8);
-        c /= 10;
-    }
-    digits_a.sort();
-    digits_b.sort();
-    digits_c.sort();
-
-    for i in 0..digits_a.len()
-    {
-        if digits_a[i] != digits_b[i] ||
-           digits_a[i] != digits_c[i]
-        {
-            return false
-        }
-    }
-    return true;
-}
-
-
 pub fn p49() -> u64
 {
     let sieve = primal::Sieve::new(9_999);
@@ -2025,7 +1988,7 @@ pub fn p49() -> u64
             {
                 // found 3 primes a in a sequence
                 // check if they are permutations
-                if is_perm( primes[i], primes[j], k )
+                if is_3_perm( primes[i], primes[j], k )
                 {
                     let value : u64 = (primes[i]*100_000_000 + primes[j]*10_000 + k) as u64;
                     return value
@@ -2171,4 +2134,35 @@ pub fn p51() -> u64
     }
 
     return 0;
+}
+
+
+
+
+// It can be seen that the number, 125874, and its double, 251748, contain exactly the same digits, but in a different order.
+// Find the smallest positive integer, x, such that 2x, 3x, 4x, 5x, and 6x, contain the same digits.
+
+// obviously the first digit has to be a 1 and the number must contain most of a 2, 3, 4, 5 and 6 
+// 3*6 = 18 and 2*4 = 8 so I would guess there is an 8 also
+// the example had 6 digits so I assume the answer must have at least 6 digits
+
+
+pub fn p52() -> u64
+{
+    let mut candidate = 123456;
+    loop
+    {
+        for i in 2..7
+        {
+            if is_perm( candidate, candidate*i ) == false
+            {
+                break;
+            }
+            if i == 6
+            {
+                return candidate as u64;
+            }
+        }
+        candidate += 1;
+    }
 }
