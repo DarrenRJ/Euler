@@ -30,7 +30,7 @@ fn main()
         Func::U64(p31), Func::U64(p32), Func::U64(p33), Func::U64(p34), Func::U64(p35), Func::U64(p36),
         Func::U64(p37), Func::U64(p38), Func::U64(p39), Func::U64(p40), Func::U64(p41), Func::U64(p42),
         Func::U64(p43), Func::U64(p44), Func::U64(p45), Func::U64(p46), Func::U64(p47), Func::U64(p48),
-        Func::U64(p49), Func::U64(p50), Func::U64(p51), Func::U64(p52) ];
+        Func::U64(p49), Func::U64(p50), Func::U64(p51), Func::U64(p52), Func::U64(p53) ];
     let start_time = PreciseTime::now();
     let mut total_time : time::Duration = start_time.to(start_time);
 
