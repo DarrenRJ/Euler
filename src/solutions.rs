@@ -838,7 +838,6 @@ pub fn p19() -> u64
 pub fn p20() -> u64
 {
     let mut digit_sum : u64 = 0;
-
     let mut big_num = "100".parse::<BigUint>().unwrap();
 
     for i in 2..100
@@ -2165,4 +2164,59 @@ pub fn p52() -> u64
         }
         candidate += 1;
     }
+}
+
+
+
+
+// There are exactly ten ways of selecting three from five, 12345:
+// 123, 124, 125, 134, 135, 145, 234, 235, 245, and 345
+
+// In combinatorics, we use the notation, 5C3 = 10.
+
+// In general,
+// nCr = 	
+// n!
+// r!(n−r)!
+// 	,where r ≤ n, n! = n×(n−1)×...×3×2×1, and 0! = 1.
+// It is not until n = 23, that a value exceeds one-million: 23C10 = 1144066.
+// How many, not necessarily distinct, values of  nCr, for 1 ≤ n ≤ 100, are greater than one-million?
+
+
+// loop over n values from 100 down, and r values from 1 up to c
+// it seems the numbers get too big, so work with cancelled values
+// that don't get to big and bail as soon as we hit one
+pub fn p53() -> u64
+{
+    let mut sum : u64 = 0;
+    let mut bail = false;
+
+    // for n from 100 to 1
+    for i in 0..100
+    {
+        let n : u64 = 100-i;
+        let mut numerator : u128 = n as u128;
+        let mut denominator : u128 = 1;
+        for r in 1..n
+        { 
+            if numerator/denominator > 1_000_000
+            {
+                sum += n - 2*r + 1;               
+                break;
+            }
+            // if we did not find a hit for any value of r
+            // then we wont find any for smaller values of n
+            if r+1 == n
+            {
+                bail = true;
+            }
+            denominator *= (r+1) as u128;
+            numerator *= (n-r) as u128;            
+        }
+        if bail == true
+        {
+            break;
+        }
+    }
+    return sum;
 }
