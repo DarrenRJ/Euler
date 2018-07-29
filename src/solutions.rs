@@ -2222,3 +2222,59 @@ pub fn p53() -> u64
 }
 
 
+// take a BigUint and add itself to its decimal reversal
+fn reverse_and_add( value :  num::BigUint ) -> num::BigUint
+{
+    let reverse_bytes :Vec<u8> = value.to_str_radix(10).bytes().rev().collect();
+
+    value+BigUint::parse_bytes( &reverse_bytes, 10 ).unwrap()
+}
+
+
+
+pub fn p55() -> u64 {
+    let mut is_lychrel_bitmask : [usize; 10_000/8 ] = [ 0; 10_000/8 ]; // 10k entry bitmask, bit is set when value has been calculated
+    let mut lychrel_count : u64 = 0;
+
+
+    // loop 9_999 times
+    for i in 0..10_000 {
+
+        let j = 9_999-i; // j from 9_999 to 0
+        let mut count = 1;
+        let mut value = j.to_biguint().unwrap();
+        let mut first_loop = true;
+  
+        loop {
+            value = reverse_and_add(value);
+
+            if bigint_is_dec_palendrome( &value ) {
+                break;
+            }
+            // only test the shortcut on the first loop 
+            if first_loop {
+                let value_usize = value.to_string().parse::<usize>().unwrap();
+                // if the value
+                if value_usize < 10_000 {
+                    if is_lychrel_bitmask[value_usize/64] & (1<<(value_usize%64)) != 0 {
+//                        println!("{} is lychrel because {} is lychrel", j, value_usize );
+                        lychrel_count += 1;
+                        is_lychrel_bitmask[j/64] |= 1<<(j%64);
+                    }
+                    break;
+                }
+                first_loop = false;
+            }
+
+            if count >= 50 {
+                lychrel_count += 1;
+                is_lychrel_bitmask[j/64] |= 1<<(j%64); // set the bit in the bitmask
+//                println!( "{} is lychrel", j );                  
+                break;
+            }
+            count += 1;
+        }
+    }
+
+    lychrel_count
+}
