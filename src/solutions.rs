@@ -1,6 +1,7 @@
 
 
 use num::bigint::{ BigUint, ToBigUint};
+use num::Zero;
 use factors::*;
 use palindrome::*;
 use choose::*;
@@ -9,6 +10,9 @@ use std::cmp;
 use std::fs::File;
 use std::io::prelude::*;
 use std::collections::HashSet;
+use std::ops::Rem;
+
+
 
 extern crate primal;
 extern crate num;
@@ -2231,9 +2235,26 @@ fn reverse_and_add( value :  num::BigUint ) -> num::BigUint
 }
 
 
+// If we take 47, reverse and add, 47 + 74 = 121, which is palindromic.
 
+// Not all numbers produce palindromes so quickly. For example,
+
+// 349 + 943 = 1292,
+// 1292 + 2921 = 4213
+// 4213 + 3124 = 7337
+
+// That is, 349 took three iterations to arrive at a palindrome.
+
+// Although no one has proved it yet, it is thought that some numbers, like 196, never produce a palindrome. 
+// A number that never forms a palindrome through the reverse and add process is called a Lychrel number. 
+// In addition you are given that for every number below ten-thousand, it will either (i) become a palindrome in less than fifty iterations, or, (ii) no one, with all the computing power that exists, has managed so far to map it to a palindrome. 
+// In fact, 10677 is the first number to be shown to require over fifty iterations before producing a palindrome: 4668731596684224866951378664 (53 iterations, 28-digits).
+// Surprisingly, there are palindromic numbers that are themselves Lychrel numbers; the first example is 4994.
+// How many Lychrel numbers are there below ten-thousand?
 pub fn p55() -> u64 {
-    let mut is_lychrel_bitmask : [usize; 10_000/8 ] = [ 0; 10_000/8 ]; // 10k entry bitmask, bit is set when value has been calculated
+// 10k entry bitmask, bit is set when value has been calculated
+// works on 64bit machines
+    let mut is_lychrel_bitmask : [usize; 10_000/8 ] = [ 0; 10_000/8 ];
     let mut lychrel_count : u64 = 0;
 
 
@@ -2254,8 +2275,9 @@ pub fn p55() -> u64 {
             // only test the shortcut on the first loop 
             if first_loop {
                 let value_usize = value.to_string().parse::<usize>().unwrap();
-                // if the value
+                // if the value is in the correct range, we have checked it allready
                 if value_usize < 10_000 {
+                    // if we found it was lychrel then j is also lychrel
                     if is_lychrel_bitmask[value_usize/64] & (1<<(value_usize%64)) != 0 {
 //                        println!("{} is lychrel because {} is lychrel", j, value_usize );
                         lychrel_count += 1;
@@ -2277,4 +2299,70 @@ pub fn p55() -> u64 {
     }
 
     lychrel_count
+}
+
+
+
+
+
+// sum the decimal digits of a number
+pub fn sum_dec_digits( number : BigUint ) -> u64
+{
+    let mut sum : u64 = 0;
+    let byte_vec =  number.to_str_radix(10).into_bytes();
+
+    for byte in byte_vec
+    {
+        sum += (byte - 0x30) as u64;
+    }
+    sum
+}
+
+// calculate a^b =
+pub fn exp( mut number : BigUint, mut exponent : BigUint ) -> BigUint
+{
+    let mut result : BigUint = BigUint::from(1u32);
+
+    loop
+    {
+        if !exponent.clone().rem(2u32).is_zero()
+        {
+            result = result * number.clone();
+        }
+        exponent = exponent >> 1;
+        if exponent.is_zero()
+        {
+            return result
+        }
+        number = number.clone() * number;
+    }
+}
+
+
+// A googol (10^100) is a massive number: one followed by one-hundred zeros; 
+// 100^100 is almost unimaginably large: one followed by two-hundred zeros. 
+// Despite their size, the sum of the digits in each number is only 1.
+// Considering natural numbers of the form, a^b, where a, b < 100, what is the maximum digital sum?
+
+pub fn p56() -> u64
+{
+    let mut biggest = 0;
+    let mut current; 
+
+    for i in 1..100
+    {
+        let mut a = 100-i;
+        for j in 1..100
+        {
+            let mut b = 100-j;
+            let power = exp( BigUint::from(a as u32), BigUint::from(b as u32) );
+            current = sum_dec_digits(power.clone());
+//            println!("a = {} b = {} exp = {} sum of digits = {}", i, j, power, current );
+            if current > biggest
+            {
+                biggest = current;
+            }
+        }
+    }
+    biggest
 }
