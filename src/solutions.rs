@@ -2362,6 +2362,16 @@ pub fn p56() -> u64
             {
                 biggest = current;
             }
+            // check if it is impossible to find a bigger digit sum
+            else if power.to_str_radix(10).len() as u64 *9u64 <= biggest
+            {
+                // if this was on the first inner loop we can quit the outer loop also
+                if j == 1
+                {
+                    return biggest;
+                }
+                break;
+            }
         }
     }
     biggest
