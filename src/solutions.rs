@@ -1,7 +1,6 @@
 
 
 use num::bigint::{ BigUint, ToBigUint};
-use num::Zero;
 use factors::*;
 use palindrome::*;
 use choose::*;
@@ -10,7 +9,6 @@ use std::cmp;
 use std::fs::File;
 use std::io::prelude::*;
 use std::collections::HashSet;
-use std::ops::Rem;
 
 
 
@@ -2303,8 +2301,6 @@ pub fn p55() -> u64 {
 
 
 
-
-
 // sum the decimal digits of a number
 pub fn sum_dec_digits( number : BigUint ) -> u64
 {
@@ -2318,22 +2314,26 @@ pub fn sum_dec_digits( number : BigUint ) -> u64
     sum
 }
 
-// calculate a^b =
-pub fn exp( mut number : BigUint, mut exponent : BigUint ) -> BigUint
+// calculate a to the power of b =
+pub fn exp( mut number : BigUint, mut b : usize ) -> BigUint
 {
     let mut result : BigUint = BigUint::from(1u32);
 
     loop
     {
-        if !exponent.clone().rem(2u32).is_zero()
+        // if the lowest bit in the exponent is set
+        if (b & 1) != 0
         {
+            // accumulate the current value
             result = result * number.clone();
         }
-        exponent = exponent >> 1;
-        if exponent.is_zero()
+        b = b >> 1;
+        // if we have accumulated all the bits
+        if b == 0
         {
-            return result
+            return result;
         }
+        // square the number again
         number = number.clone() * number;
     }
 }
@@ -2355,9 +2355,9 @@ pub fn p56() -> u64
         for j in 1..100
         {
             let mut b = 100-j;
-            let power = exp( BigUint::from(a as u32), BigUint::from(b as u32) );
+            let power = exp( BigUint::from(a as u32), b );
             current = sum_dec_digits(power.clone());
-//            println!("a = {} b = {} exp = {} sum of digits = {}", i, j, power, current );
+//            println!("a = {} b = {} exp = {}\n", i, j, power );
             if current > biggest
             {
                 biggest = current;
