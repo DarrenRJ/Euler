@@ -2376,3 +2376,76 @@ pub fn p56() -> u64
     }
     biggest
 }
+
+
+
+
+pub fn p57() -> u64
+{
+    let mut result : u64 = 0;
+
+    let mut den : BigUint = BigUint::from(3u32);
+    let mut num : BigUint = BigUint::from(2u32);
+
+    for _i in 1..=1_000 
+    {
+//        println!("num = {} den = {}", num, den );
+
+        if  num.to_str_radix(10).len() > den.to_str_radix(10).len()
+        {
+            result += 1;
+        }
+
+        num = num + (den.clone()*2u32);
+        den = num.clone() - den;
+    }
+
+    result
+}
+
+
+
+
+
+// Starting with 1 and spiralling anticlockwise in the following way, a square spiral with side length 7 is formed.
+// 
+// 37 36 35 34 33 32 31
+// 38 17 16 15 14 13 30
+// 39 18  5  4  3 12 29
+// 40 19  6  1  2 11 28
+// 41 20  7  8  9 10 27
+// 42 21 22 23 24 25 26
+// 43 44 45 46 47 48 49
+// 
+// It is interesting to note that the odd squares lie along the bottom right diagonal, but what is more interesting is that 8 out of the 13 numbers lying along both diagonals are prime; that is, a ratio of 8/13 ≈ 62%.
+// 
+// If one complete new layer is wrapped around the spiral above, a square spiral with side length 9 will be formed. If this process is continued, what is the side length of the square spiral for which the ratio of primes along both diagonals first falls below 10%?
+
+pub fn p58() -> u64
+{
+    let sieve = primal::Sieve::new(700_000_000);
+    let mut prime_count = 0;
+    let mut total_count = 0;
+    let mut side_length = 2;
+    let mut value = 1;
+
+    loop
+    {
+        value += side_length; // the lower right corner is never prime so don't check this one
+        for _i in 0..3
+        {
+            if sieve.is_prime( value )
+            {
+                prime_count += 1;
+            }
+            value += side_length;
+        }
+        total_count += 4;
+        if ( ( prime_count * 100 ) / total_count ) < 10
+        {
+            return (side_length-1) as u64;
+        }
+        side_length += 2;
+    }
+}
+
