@@ -2497,8 +2497,6 @@ pub fn p59() -> u64 {
 
 
 
-
-
 // The primes 3, 7, 109, and 673, are quite remarkable. 
 // By taking any two primes and concatenating them in any order the result will always be prime. 
 // For example, taking 7 and 109, both 7109 and 1097 are prime. 
@@ -2522,84 +2520,84 @@ pub fn p60() -> u64 {
             // next loop providing prime b
             let mut prime_iter_b = sieve.primes_from(a);
             loop {
-                match prime_iter_b.next() {
-                    Some(b) => {
-//                        println!("a b {} {} ", a, b);
-                        if b > max_prime {
-                            break;
-                        }
-                        if !concat_is_prime(a, b, &sieve) {
-                            continue;
-                        }
+                if let Some(b) = prime_iter_b.next() { 
+//                    println!("a b {} {} ", a, b);
+                    if b > max_prime {
+                        break;
+                    }
+                    if !concat_is_prime(a, b, &sieve) {
+                        continue;
+                    }
 
-                        // next loop providing prime c
-                        let mut prime_iter_c = sieve.primes_from(b);
-                        loop {
-                            match prime_iter_c.next() {
-                                Some(c) => {
-//                                    println!("a b c {} {} {}", a, b, c );
-                                    if c > max_prime
+                    // next loop providing prime c
+                    let mut prime_iter_c = sieve.primes_from(b);
+                    loop {
+                        if let Some(c) = prime_iter_c.next() {
+//                        println!("a b c {} {} {}", a, b, c );
+                            if c > max_prime
+                            {
+                                break;
+                            }
+                            if !concat_is_prime(a, c, &sieve) ||
+                               !concat_is_prime(b, c, &sieve) {
+                                continue;
+                            }
+//                            println!("a b c {} {} {}", a, b, c);
+                            // next loop providing d
+                            let mut prime_iter_d = sieve.primes_from(c);
+                            loop {
+                                if let Some(d) = prime_iter_d.next() {
+                                    if d > max_prime
                                     {
                                         break;
                                     }
-                                    if !concat_is_prime(a, c, &sieve) ||
-                                       !concat_is_prime(b, c, &sieve) {
-                                        continue;
-                                    }
-//                                    println!("a b c {} {} {}", a, b, c);
-                                    // next loop providing d
-                                    let mut prime_iter_d = sieve.primes_from(c);
+                                    if !concat_is_prime(a, d, &sieve) ||
+                                       !concat_is_prime(b, d, &sieve) ||
+                                       !concat_is_prime(c, d, &sieve) {
+                                            continue;
+                                        }
+//                                    println!("a b c d {} {} {} {}", a, b, c, d);
+                                    // innermost loop providing e
+                                    let mut prime_iter_e = sieve.primes_from(d);
                                     loop {
-                                        match prime_iter_d.next() {
-                                            Some(d) => {
-                                                if d > max_prime
-                                                {
-                                                    break;
-                                                }
-                                                if !concat_is_prime(a, d, &sieve) ||
-                                                   !concat_is_prime(b, d, &sieve) ||
-                                                   !concat_is_prime(c, d, &sieve) {
-                                                       continue;
-                                                   }
-//                                                println!("a b c d {} {} {} {}", a, b, c, d);
-                                                // innermost loop providing e
-                                                let mut prime_iter_e = sieve.primes_from(d);
-                                                loop {
-                                                    match prime_iter_e.next() {
-                                                        Some(e) => {
-                                                            if e > max_prime
-                                                            {
-                                                                break;
-                                                            }
-                                                            if !concat_is_prime( a, e, &sieve ) ||
-                                                               !concat_is_prime( b, e, &sieve ) ||
-                                                               !concat_is_prime( c, e, &sieve ) ||
-                                                               !concat_is_prime( d, e, &sieve ) {
-                                                                   continue;
-                                                               }
-                                                            // ok here we have a candidate, check if it is the smallest
-                                                            if lowest_sum == 0
-                                                                || ((a + b + c + d + e) as u64)
-                                                                    < lowest_sum
-                                                            {
-                                                                lowest_sum =
-                                                                    (a + b + c + d + e) as u64;
-                                                            }
-                                                            println!("got {}", lowest_sum);
-                                                        }
-                                                        None => break,
-                                                    }
-                                                }
+                                        if let Some(e) = prime_iter_e.next() { 
+                                            if e > max_prime
+                                            {
+                                                break;
                                             }
-                                            None => break,
+                                            if !concat_is_prime( a, e, &sieve ) ||
+                                               !concat_is_prime( b, e, &sieve ) ||
+                                               !concat_is_prime( c, e, &sieve ) ||
+                                               !concat_is_prime( d, e, &sieve ) {
+                                                    continue;
+                                                }
+                                            // ok here we have a candidate, check if it is the smallest
+                                            if lowest_sum == 0
+                                                || ((a + b + c + d + e) as u64)
+                                                    < lowest_sum
+                                            {
+                                                lowest_sum =
+                                                    (a + b + c + d + e) as u64;
+//                                                 println!("got a={} b={} c={} d={} e={} {}", a,b,c,d,e,lowest_sum);                                                                    
+                                            }
+                                        }
+                                        else {
+                                            break;
                                         }
                                     }
                                 }
-                                None => break,
+                                else {
+                                    break;
+                                }
                             }
                         }
+                        else {
+                            break;
+                        }
                     }
-                    None => break,
+                }
+                else {
+                    break;
                 }
             }
         }
