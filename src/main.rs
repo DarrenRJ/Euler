@@ -81,6 +81,7 @@ fn main() {
         Func::U64(p58),
         Func::U64(p59),
         Func::U64(p60),
+        Func::U64(p61),
     ];
     let start_time = PreciseTime::now();
     let mut total_time: time::Duration = start_time.to(start_time);

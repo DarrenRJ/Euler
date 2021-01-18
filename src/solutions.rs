@@ -2607,3 +2607,127 @@ pub fn p60() -> u64 {
     }
     lowest_sum
 }
+
+
+// recursive helper function for p61
+pub fn has_match( sets : &mut Vec<HashSet<u32>>, high_digits: u32, low_digits : u32, results: &mut Vec<u32> ) -> bool {
+
+    // if our set it empty
+    if sets.len() == 0 {
+        return true;
+    }
+
+    let mut cnt : usize = 0;
+    for set in sets.iter(){
+        let mut new_sets = sets.clone();
+        new_sets.remove(cnt); // remove the current polygonal set from the new vec
+        for i in set.iter() {
+            if *i % 100 == high_digits {
+                if has_match(&mut new_sets,(i)/100u32, low_digits, results) {
+//                    println!( "local_results = {:?}", local_results );
+                    // if we are on the last digit check if the high digits match the low digits of the original
+                    if ( new_sets.len() == 0 ) && ( i/100 != low_digits ) {
+                        return false;
+                    }
+                    results.push(*i); // add the value to the results  
+                    return true;
+                }
+            }
+        }
+        cnt += 1;
+    }
+    results.clear();
+    return false;
+}
+
+
+// Find the sum of the only ordered set of six cyclic 4-digit numbers for which each polygonal type: 
+// triangle, square, pentagonal, hexagonal, heptagonal, and octagonal, is represented by a different number in the set.
+pub fn p61() -> u64 {
+    let mut octagonal = HashSet::new();
+    let mut heptagonal = HashSet::new();
+    let mut hexagonal = HashSet::new();
+    let mut pentagonal = HashSet::new();
+    let mut square = HashSet::new();
+    let mut triangle = HashSet::new();
+    let mut results: Vec<u32> = Vec::new();
+
+    // build hashsets of the 4 digit polygonal numbers
+    for i in 1..1000 {
+        let triangle_value: u32 = i*(i+1)/2;
+        // we only need 4 digit values
+        // so we don't need values less than 1000
+
+        // and we don't need values greated than 9999
+        if triangle_value > 9999 {
+            break;
+        }
+        if triangle_value > 1000 {
+            triangle.insert(triangle_value);
+        }
+        
+        let square_value: u32 = i*i;
+        if square_value > 9999 {
+            continue;
+        }
+        if square_value > 1000 {
+            square.insert(square_value);
+        }
+        let pentagon_value: u32 = i*((3*i)-1)/2;
+        if pentagon_value > 9999 {
+            continue;
+        }
+        if pentagon_value > 1000 {
+            pentagonal.insert(pentagon_value);
+        }
+        let hexavon_value: u32 = i*((2*i)-1);
+        if hexavon_value > 9999 {
+            continue;
+        }
+        if hexavon_value > 1000 {
+            hexagonal.insert(hexavon_value);
+        }
+        let heptagon_value: u32 = i*((5*i)-3)/2;
+        if heptagon_value > 9999 {
+            continue;
+        }
+        if heptagon_value > 1000 {
+            heptagonal.insert(heptagon_value);
+        }
+        let octagon_value: u32 = i*((3*i)-2);
+        if octagon_value > 9999 {
+            continue;
+        }
+        if octagon_value > 1000 {
+            octagonal.insert(octagon_value);
+        }
+    }
+
+ // make a vector of our hashsets
+    let mut polygonal = Vec::new();
+    polygonal.push(heptagonal);
+    polygonal.push(hexagonal);
+    polygonal.push(pentagonal);
+    polygonal.push(square);
+    polygonal.push(triangle);
+
+    // because the octagonal set should have the least numbers
+    // start by iterating over that set and checking for 2 digit cycles
+    // in the other sets
+
+    for i in octagonal{
+        let mut poly_set = polygonal.clone();
+
+        if has_match( &mut poly_set, i/100, i%100, &mut results ){
+            // wierd compiler bug requires this println to get the correct result
+            println!( "results = {:?}", results );        
+            let mut sum = i;
+            for value in results {
+                sum += value;
+            }
+            return sum as u64;
+        }
+    }
+
+    0
+}
