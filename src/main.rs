@@ -20,7 +20,7 @@ pub enum Func {
 }
 
 fn main() {
-    let solutions: Vec<Func> = vec![
+    let solutions: Vec<Func> = vec![     
         Func::U64(p1),
         Func::U64(p2),
         Func::U64(p3),
@@ -82,6 +82,7 @@ fn main() {
         Func::U64(p59),
         Func::U64(p60),
         Func::U64(p61),
+        Func::U64(p62),
     ];
     let start_time = PreciseTime::now();
     let mut total_time: time::Duration = start_time.to(start_time);
@@ -92,25 +93,37 @@ fn main() {
                 let start = PreciseTime::now();
                 let result = f();
                 let end = PreciseTime::now();
-                total_time = total_time.checked_add(&start.to(end)).unwrap();
-                println!(
-                    "Answer for problem {} is {} in {:?}",
-                    i + 1,
-                    result,
-                    start.to(end)
-                );
+                total_time = total_time.checked_add(&start.to(end)).unwrap();                
+                let duration = start.to(end);
+                if let Some(nanoseconds) = duration.num_nanoseconds(){
+                    println!(
+                        "Answer for problem {:>2} in {:>2}s {:>3}ms {:>3}us {:>03}ns is {}",
+                        i + 1,
+                        nanoseconds/1000000000i64,
+                        (nanoseconds/1000000i64)%1000,
+                        (nanoseconds/1000i64)%1000,
+                        nanoseconds%1000,
+                        result,
+                    );
+                }
             }
             Func::I64(f) => {
                 let start = PreciseTime::now();
                 let result = f();
                 let end = PreciseTime::now();
-                total_time = total_time.checked_add(&start.to(end)).unwrap();
-                println!(
-                    "Answer for problem {} is {} in {:?}",
-                    i + 1,
-                    result,
-                    start.to(end)
-                );
+                total_time = total_time.checked_add(&start.to(end)).unwrap();                
+                let duration = start.to(end);
+                if let Some(nanoseconds) = duration.num_nanoseconds(){
+                    println!(
+                        "Answer for problem {:>2} in {:>2}s {:>3}ms {:>3}us {:>03}ns is {}",
+                        i + 1,
+                        nanoseconds/1000000000i64,
+                        (nanoseconds/1000000i64)%1000,
+                        (nanoseconds/1000i64)%1000,
+                        nanoseconds%1000,
+                        result,
+                    );
+                }
             }
         }
     }
