@@ -7,6 +7,7 @@ use std::collections::HashSet;
 use std::fs::File;
 use std::io::prelude::*;
 use util::*;
+use std::collections::HashMap;
 
 extern crate num;
 extern crate primal;
@@ -2610,25 +2611,26 @@ pub fn p60() -> u64 {
 
 
 // recursive helper function for p61
-pub fn has_match( sets : &mut Vec<HashSet<u32>>, high_digits: u32, low_digits : u32, results: &mut Vec<u32> ) -> bool {
-
-    // if our set it empty
-    if sets.len() == 0 {
-        return true;
-    }
-
+pub fn has_match( bags : &mut Vec<Vec<u32>>, high_digits: u32, low_digits : u32, results: &mut Vec<u32> ) -> bool {
     let mut cnt : usize = 0;
-    for set in sets.iter(){
-        let mut new_sets = sets.clone();
-        new_sets.remove(cnt); // remove the current polygonal set from the new vec
-        for i in set.iter() {
+
+    for bag in bags.iter(){
+        let mut new_bags = bags.clone();
+        new_bags.remove(cnt); // remove the current polygonal set from the new vec
+        for i in bag.iter() {
             if *i % 100 == high_digits {
-                if has_match(&mut new_sets,(i)/100u32, low_digits, results) {
-//                    println!( "local_results = {:?}", local_results );
-                    // if we are on the last digit check if the high digits match the low digits of the original
-                    if ( new_sets.len() == 0 ) && ( i/100 != low_digits ) {
-                        return false;
+                // if we are on the last digit check if the high digits match the low digits of the original
+                if new_bags.len() == 0 {
+                    if i/100 == low_digits {
+                        results.push(*i); // add the value to the results 
+                        return true;
                     }
+                    continue;
+                }
+
+                // check if there is a match remaining
+                if has_match(&mut new_bags,(i)/100u32, low_digits, results) {
+
                     results.push(*i); // add the value to the results  
                     return true;
                 }
@@ -2644,12 +2646,12 @@ pub fn has_match( sets : &mut Vec<HashSet<u32>>, high_digits: u32, low_digits : 
 // Find the sum of the only ordered set of six cyclic 4-digit numbers for which each polygonal type: 
 // triangle, square, pentagonal, hexagonal, heptagonal, and octagonal, is represented by a different number in the set.
 pub fn p61() -> u64 {
-    let mut octagonal = HashSet::new();
-    let mut heptagonal = HashSet::new();
-    let mut hexagonal = HashSet::new();
-    let mut pentagonal = HashSet::new();
-    let mut square = HashSet::new();
-    let mut triangle = HashSet::new();
+    let mut octagonal:Vec<u32> = Vec::new();
+    let mut heptagonal:Vec<u32> = Vec::new();
+    let mut hexagonal:Vec<u32> = Vec::new();
+    let mut pentagonal:Vec<u32> = Vec::new();
+    let mut square:Vec<u32> = Vec::new();
+    let mut triangle:Vec<u32> = Vec::new();
     let mut results: Vec<u32> = Vec::new();
 
     // build hashsets of the 4 digit polygonal numbers
@@ -2663,7 +2665,7 @@ pub fn p61() -> u64 {
             break;
         }
         if triangle_value > 1000 {
-            triangle.insert(triangle_value);
+            triangle.push(triangle_value);
         }
         
         let square_value: u32 = i*i;
@@ -2671,35 +2673,35 @@ pub fn p61() -> u64 {
             continue;
         }
         if square_value > 1000 {
-            square.insert(square_value);
+            square.push(square_value);
         }
         let pentagon_value: u32 = i*((3*i)-1)/2;
         if pentagon_value > 9999 {
             continue;
         }
         if pentagon_value > 1000 {
-            pentagonal.insert(pentagon_value);
+            pentagonal.push(pentagon_value);
         }
         let hexavon_value: u32 = i*((2*i)-1);
         if hexavon_value > 9999 {
             continue;
         }
         if hexavon_value > 1000 {
-            hexagonal.insert(hexavon_value);
+            hexagonal.push(hexavon_value);
         }
         let heptagon_value: u32 = i*((5*i)-3)/2;
         if heptagon_value > 9999 {
             continue;
         }
         if heptagon_value > 1000 {
-            heptagonal.insert(heptagon_value);
+            heptagonal.push(heptagon_value);
         }
         let octagon_value: u32 = i*((3*i)-2);
         if octagon_value > 9999 {
             continue;
         }
         if octagon_value > 1000 {
-            octagonal.insert(octagon_value);
+            octagonal.push(octagon_value);
         }
     }
 
@@ -2717,10 +2719,7 @@ pub fn p61() -> u64 {
 
     for i in octagonal{
         let mut poly_set = polygonal.clone();
-
-        if has_match( &mut poly_set, i/100, i%100, &mut results ){
-            // wierd compiler bug requires this println to get the correct result
-            println!( "results = {:?}", results );        
+        if has_match( &mut poly_set, i/100, i%100, &mut results ){       
             let mut sum = i;
             for value in results {
                 sum += value;
@@ -2731,3 +2730,54 @@ pub fn p61() -> u64 {
 
     0
 }
+
+
+
+
+// The cube, 41063625 (3453), can be permuted to produce two other cubes: 56623104 (3843) and 66430125 (4053). 
+// In fact, 41063625 is the smallest cube which has exactly three permutations of its digits which are also cube.
+
+// Find the smallest cube for which exactly five permutations of its digits are cube.
+
+pub fn p62() -> u64 {
+
+    struct Value {
+        smallest_cube: u64,  // the smallest cube that match the digits in the vec
+        count: u32,         // the count of matches for these digits
+    }  
+
+    // the key is the sorted list of digits of the value cubed
+    let mut matches: HashMap<String, Value>= HashMap::new();
+    let mut cube : u64 = 11;
+
+    loop {
+        let cubed: u64 = cube*cube*cube;
+        let digits = cubed.to_string();
+        let mut chars: Vec<char> =digits.chars().collect();
+        chars.sort();
+        let mut sorted = String::new();
+        for c in chars {
+            sorted.push(c);
+        }
+
+        if let Some( mut update ) = matches.get_mut(&sorted) {
+            // update the existing entry
+            update.count += 1;
+            if update.count >= 5 {
+//                println!("smallest = {} largest = {} largest cube = {} ordered = {}", update.smallest_cube, cube, cubed, sorted);
+                return update.smallest_cube;
+            }
+        }
+        else
+        {
+            // inset a new entry 
+            let new_entry = Value {
+                smallest_cube : cubed as u64,
+                count : 1,
+            };
+            matches.insert(sorted, new_entry);
+        }
+        cube += 1;
+    }
+}
+
