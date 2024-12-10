@@ -2505,11 +2505,14 @@ pub fn p59() -> u64 {
 //
 // Find the lowest sum for a set of five primes for which any two primes concatenate to produce another prime.
 //
+
+// answer = 26033
 pub fn p60() -> u64 {
+    let max_prime = 20_000;
     let sieve = primal::Sieve::new(4_200_000_000);
     let mut prime_iter_a = sieve.primes_from(3);
     let mut lowest_sum: u64 = 0;
-    let max_prime = 30_000;
+
 
     // outer loop, providing prime a
     loop {
@@ -2526,6 +2529,11 @@ pub fn p60() -> u64 {
                     if b > max_prime {
                         break;
                     }
+                    // if we have a solution and this will be larger than it
+                    if ( lowest_sum > 0 && (a+b) as u64 > lowest_sum )
+                    {
+                        return lowest_sum; // give up early, we know this is the lowest sum
+                    }                     
                     if !concat_is_prime(a, b, &sieve) {
                         continue;
                     }
@@ -2539,6 +2547,11 @@ pub fn p60() -> u64 {
                             {
                                 break;
                             }
+                            // if we have a solution and this will be larger than it
+                            if ( lowest_sum > 0 && (a+b+c) as u64 > lowest_sum )
+                            {
+                                break; //speed up by culling here
+                            }                            
                             if !concat_is_prime(a, c, &sieve) ||
                                !concat_is_prime(b, c, &sieve) {
                                 continue;
@@ -2551,6 +2564,11 @@ pub fn p60() -> u64 {
                                     if d > max_prime
                                     {
                                         break;
+                                    }
+                                    // if we have a solution and this will be larger than it
+                                    if ( lowest_sum > 0 && (a+b+c+d) as u64 > lowest_sum )
+                                    {
+                                        break; //speed up by culling here
                                     }
                                     if !concat_is_prime(a, d, &sieve) ||
                                        !concat_is_prime(b, d, &sieve) ||
@@ -2565,6 +2583,11 @@ pub fn p60() -> u64 {
                                             if e > max_prime
                                             {
                                                 break;
+                                            }
+                                            // if we have a solution and this will be larger than it
+                                            if ( lowest_sum > 0 && (a+b+c+d+e) as u64 > lowest_sum )
+                                            {
+                                                break; //speed up by culling here
                                             }
                                             if !concat_is_prime( a, e, &sieve ) ||
                                                !concat_is_prime( b, e, &sieve ) ||
@@ -2608,6 +2631,9 @@ pub fn p60() -> u64 {
     }
     lowest_sum
 }
+
+
+
 
 
 // recursive helper function for p61
@@ -2760,7 +2786,7 @@ pub fn p62() -> u64 {
             sorted.push(c);
         }
 
-        if let Some( mut update ) = matches.get_mut(&sorted) {
+        if let Some( update ) = matches.get_mut(&sorted) {
             // update the existing entry
             update.count += 1;
             if update.count >= 5 {
@@ -2781,3 +2807,57 @@ pub fn p62() -> u64 {
     }
 }
 
+pub fn p63() -> u64 {
+    let mut count : u64 = 0;
+
+    for base in 0..10 {
+        let mut power = 1;
+        loop {
+            let value = (base as u128).pow(power);
+            let mut digits = 1;
+            let mut div = value/10;
+            while div > 0 {
+                div /= 10;
+                digits += 1;
+            }
+//            println!( "base {} power {} value {} digits {}", base, power, value, digits );            
+            if digits < power {
+                break;
+            }          
+            count += 1;
+            power += 1;
+        }
+    }
+    count
+}
+
+pub fn p64() -> u64 {
+
+    let mut result: u64 = 0;
+    for i in 1..=10_000 {
+
+        let a0 : u32 = (i as f32).sqrt() as u32;
+        if a0*a0 == i {
+            continue;
+        }
+        let mut period : u32 = 0;
+        let mut d : u32 = 1;
+        let mut m : u32 = 0;
+        let mut a : u32 = a0;
+
+        loop {
+            m = d*a-m;
+            d=(i-m*m)/d;
+            a=(a0+m)/d;
+            period += 1;
+            if a == 2*a0 {
+                break;
+            }
+        }
+        if period % 2 == 1 {
+            result += 1;
+        }
+    }
+
+    result
+}
