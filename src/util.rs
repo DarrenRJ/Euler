@@ -1,6 +1,6 @@
 extern crate primal;
 
-use factors::*;
+use crate::factors::*;
 
 // make a string out of a number
 pub fn stringify(in_num: u16) -> String {

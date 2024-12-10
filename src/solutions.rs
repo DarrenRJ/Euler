@@ -1,12 +1,12 @@
-use choose::*;
-use factors::*;
+use crate::choose::*;
+use crate::factors::*;
 use num::bigint::{BigUint, ToBigUint};
-use palindrome::*;
+use crate::palindrome::*;
 use std::cmp;
 use std::collections::HashSet;
 use std::fs::File;
 use std::io::prelude::*;
-use util::*;
+use crate::util::*;
 use std::collections::HashMap;
 
 extern crate num;

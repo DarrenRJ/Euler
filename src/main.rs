@@ -9,8 +9,8 @@ extern crate num;
 extern crate primal;
 extern crate time;
 
-use problem54::p54;
-use solutions::*;
+use crate::problem54::p54;
+use crate::solutions::*;
 use time::PreciseTime;
 
 #[derive(Debug)]

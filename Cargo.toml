@@ -1,4 +1,5 @@
 [package]
+edition = "2021"
 name = "euler"
 version = "0.1.0"
 authors = ["Darren <darrenrjenkins@gmail.com>"]
