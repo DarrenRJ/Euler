@@ -9,8 +9,8 @@ extern crate num;
 extern crate primal;
 extern crate time;
 
-use problem54::p54;
-use solutions::*;
+use crate::problem54::p54;
+use crate::solutions::*;
 use time::PreciseTime;
 
 #[derive(Debug)]
@@ -83,6 +83,8 @@ fn main() {
         Func::U64(p60),
         Func::U64(p61),
         Func::U64(p62),
+        Func::U64(p63),
+        Func::U64(p64),
     ];
     let start_time = PreciseTime::now();
     let mut total_time: time::Duration = start_time.to(start_time);
