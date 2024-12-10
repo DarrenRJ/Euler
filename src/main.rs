@@ -7,11 +7,11 @@ mod util;
 
 extern crate num;
 extern crate primal;
-extern crate time;
 
 use crate::problem54::p54;
 use crate::solutions::*;
-use time::PreciseTime;
+use std::time::Instant;
+use std::time::Duration;
 
 #[derive(Debug)]
 pub enum Func {
@@ -86,49 +86,47 @@ fn main() {
         Func::U64(p63),
         Func::U64(p64),
     ];
-    let start_time = PreciseTime::now();
-    let mut total_time: time::Duration = start_time.to(start_time);
+    let start_time = Instant::now();
+    let mut total_time = Duration::new(0,0);
 
     for i in 0..solutions.len() {
         match solutions[i] {
             Func::U64(f) => {
-                let start = PreciseTime::now();
+                let start = Instant::now();
                 let result = f();
-                let end = PreciseTime::now();
-                total_time = total_time.checked_add(&start.to(end)).unwrap();                
-                let duration = start.to(end);
-                if let Some(nanoseconds) = duration.num_nanoseconds(){
-                    println!(
-                        "Answer for problem {:>2} in {:>2}s {:>3}ms {:>3}us {:>03}ns is {}",
-                        i + 1,
-                        nanoseconds/1000000000i64,
-                        (nanoseconds/1000000i64)%1000,
-                        (nanoseconds/1000i64)%1000,
-                        nanoseconds%1000,
-                        result,
-                    );
-                }
+                let end = Instant::now();
+                let duration = end.duration_since(start);
+                total_time = total_time.checked_add(duration).unwrap();
+                let nanoseconds = duration.as_nanos();
+                println!(
+                    "Answer for problem {:>2} in {:>2}s {:>3}ms {:>3}us {:>03}ns is {}",
+                    i + 1,
+                    nanoseconds/1000000000u128,
+                    (nanoseconds/1000000u128)%1000,
+                    (nanoseconds/1000u128)%1000,
+                    nanoseconds%1000,
+                    result,
+                );
             }
             Func::I64(f) => {
-                let start = PreciseTime::now();
+                let start = Instant::now();
                 let result = f();
-                let end = PreciseTime::now();
-                total_time = total_time.checked_add(&start.to(end)).unwrap();                
-                let duration = start.to(end);
-                if let Some(nanoseconds) = duration.num_nanoseconds(){
-                    println!(
-                        "Answer for problem {:>2} in {:>2}s {:>3}ms {:>3}us {:>03}ns is {}",
-                        i + 1,
-                        nanoseconds/1000000000i64,
-                        (nanoseconds/1000000i64)%1000,
-                        (nanoseconds/1000i64)%1000,
-                        nanoseconds%1000,
-                        result,
-                    );
-                }
+                let end = Instant::now();
+                let duration = end.duration_since(start);
+                total_time = total_time.checked_add(duration).unwrap();
+                let nanoseconds = duration.as_nanos();
+                println!(
+                    "Answer for problem {:>2} in {:>2}s {:>3}ms {:>3}us {:>03}ns is {}",
+                    i + 1,
+                    nanoseconds/1000000000u128,
+                    (nanoseconds/1000000u128)%1000,
+                    (nanoseconds/1000u128)%1000,
+                    nanoseconds%1000,
+                    result,
+                );
             }
         }
     }
 
-    println!("total time = {:?}", total_time);
+    println!("total time = {:?}", Instant::now().duration_since(start_time));
 }
