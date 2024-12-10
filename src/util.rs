@@ -378,7 +378,7 @@ pub fn concat_is_prime(a: usize, b: usize, prime_sieve: &primal::Sieve) -> bool 
     let b_digits = (b as f32).log(10.0) as u32;
     let mut concat = a * 10u32.pow(b_digits + 1) as usize + b;
 //    println!("a {} b {} a|b {}", a, b, concat);
-    if (concat > prime_sieve.upper_bound())
+    if concat > prime_sieve.upper_bound()
     {
         return false;
     }
@@ -389,7 +389,7 @@ pub fn concat_is_prime(a: usize, b: usize, prime_sieve: &primal::Sieve) -> bool 
     let a_digits = (a as f32).log(10.0) as u32;
     concat = b * 10u32.pow(a_digits + 1) as usize + a;
 //    println!("a {} b {} b|a {}", a, b, concat);
-    if (concat > prime_sieve.upper_bound())
+    if concat > prime_sieve.upper_bound()
     {
         return false;
     }

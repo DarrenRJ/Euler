@@ -2530,7 +2530,7 @@ pub fn p60() -> u64 {
                         break;
                     }
                     // if we have a solution and this will be larger than it
-                    if ( lowest_sum > 0 && (a+b) as u64 > lowest_sum )
+                    if lowest_sum > 0 && (a+b) as u64 > lowest_sum
                     {
                         return lowest_sum; // give up early, we know this is the lowest sum
                     }                     
@@ -2548,7 +2548,7 @@ pub fn p60() -> u64 {
                                 break;
                             }
                             // if we have a solution and this will be larger than it
-                            if ( lowest_sum > 0 && (a+b+c) as u64 > lowest_sum )
+                            if lowest_sum > 0 && (a+b+c) as u64 > lowest_sum
                             {
                                 break; //speed up by culling here
                             }                            
@@ -2566,7 +2566,7 @@ pub fn p60() -> u64 {
                                         break;
                                     }
                                     // if we have a solution and this will be larger than it
-                                    if ( lowest_sum > 0 && (a+b+c+d) as u64 > lowest_sum )
+                                    if lowest_sum > 0 && (a+b+c+d) as u64 > lowest_sum
                                     {
                                         break; //speed up by culling here
                                     }
@@ -2585,7 +2585,7 @@ pub fn p60() -> u64 {
                                                 break;
                                             }
                                             // if we have a solution and this will be larger than it
-                                            if ( lowest_sum > 0 && (a+b+c+d+e) as u64 > lowest_sum )
+                                            if lowest_sum > 0 && (a+b+c+d+e) as u64 > lowest_sum
                                             {
                                                 break; //speed up by culling here
                                             }
