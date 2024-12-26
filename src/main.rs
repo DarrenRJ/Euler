@@ -85,6 +85,7 @@ fn main() {
         Func::U64(p62),
         Func::U64(p63),
         Func::U64(p64),
+        Func::U64(p65),
     ];
     let start_time = Instant::now();
     let mut total_time = Duration::new(0,0);
