@@ -2861,3 +2861,63 @@ pub fn p64() -> u64 {
 
     result
 }
+
+
+// confusing question about infinate continued fractions
+// I didn't know anything about continued fractions, and had to learn what the hell they are
+
+// Find the sum of digits in the numerator of the 100th convergent of the continued fraction for .
+pub fn p65() -> u64 {
+    let mut accumulator_numerator: BigUint = BigUint::from(0u32);  // top number
+    let mut accumulator_denominator: BigUint = BigUint::from(1u32); // bottom number
+    let mut series = Vec::new();
+
+    // build the series of constants to work on
+    for i in 1..=100 {
+
+        let conatant : u32 = {
+            if i == 1 {
+                2
+            }
+            else if i%3 == 0 {
+                i*2/3
+            }
+            else {
+                1
+            }
+        };
+        series.push(conatant);
+    }
+//    println!("{:?}", series);
+
+    // calculate the number
+    // using a series of a+(b/c) calculations
+    // where a is the new constant b=1 and c is the old calculation
+
+    loop {
+        if series.len() == 0 {
+            break;
+        }
+        let constant = series.pop().unwrap() as u128;
+//        println!("loop start {} + {}/{}", constant, accumulator_numerator, accumulator_denominator );
+
+        // the first step is adding the latest constant
+        let temp = accumulator_denominator.clone();
+        accumulator_numerator += constant * temp;
+
+        //if there are no more constants we are done
+        if series.len() == 0 {
+            break;
+        }
+        // invert the accumulator ready for the next sum
+        let temp = accumulator_denominator;
+        accumulator_denominator = accumulator_numerator;
+        accumulator_numerator = temp;
+    }
+
+//    println!("answer = {}/{}", accumulator_numerator, accumulator_denominator );
+
+    let result : u64 = sum_dec_digits(accumulator_numerator);
+
+    result
+}
